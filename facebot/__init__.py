@@ -6,7 +6,7 @@ import json
 import requests
 from lxml import etree
 
-from facebot.message import *
+from facebot.message import send_group, send_person
 
 log = logging.getLogger('facebook')
 log.setLevel(logging.WARN)
@@ -98,3 +98,11 @@ class Facebook:
             token = ''
 
         return token
+
+    def send_group(self, thread, body, pic=None):
+        '''Send message to specific group.'''
+        send_group(self, thread, body, pic)
+
+    def send_person(self, person, body, pic=None):
+        '''Send message to specific user.'''
+        send_person(self, person, body, pic)
