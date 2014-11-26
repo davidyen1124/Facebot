@@ -7,6 +7,8 @@ Graph API doesn't provide function for sending message, so I write one.
 
 You can write a bot to talk with you, or send notification to your co-workers group if one of your server is down.
 
+Feel free to open issue or PR!
+
 Installation
 ------------
 `pip install facebot`
