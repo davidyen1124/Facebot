@@ -4,7 +4,7 @@ license = open('LICENSE.txt').read()
 
 setup(
     name='facebot',
-    version='0.0.1',
+    version='0.0.2',
     author='davidyen1124',
     author_email='davidyen1124@gmail.com',
     packages=['facebot'],
