@@ -1,6 +1,6 @@
 from setuptools import setup
 
-license = open('LICENSE').read()
+license = open('LICENSE.txt').read()
 
 setup(
     name='facebot',
@@ -10,7 +10,7 @@ setup(
     packages=['facebot'],
     url='https://github.com/davidyen1124/Facebot',
     description='Unofficial facebook api',
-    long_description=open('README.MD').read(),
+    long_description=open('README.md').read(),
     license=license,
     install_requires=[
         'lxml==3.3.5',
