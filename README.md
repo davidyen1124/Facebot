@@ -25,6 +25,14 @@ Usage
 	>>> f = Facebook('<USERNAME>', '<PASSWORD>')
 ```
 
+###Ping:
+If you want to write a long-running script,
+you should frequently call `ping` to tell facebook that you are alive.
+```
+	# play ping pong with facebook
+	>>> f.ping()
+```
+
 ###Send message to a person:
 ```
 	# send a text message
