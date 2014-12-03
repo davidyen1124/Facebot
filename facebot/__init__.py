@@ -15,6 +15,7 @@ user_agent = 'Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0'
 facebook_url = 'http://facebook.com'
 login_url = 'https://www.facebook.com/login.php'
 access_token_url = 'https://developers.facebook.com/tools/explorer/%s/permissions?version=v2.1&__user=%s&__a=1&__dyn=5U463-i3S2e4oK4pomXWo5O12wAxu&__req=2&__rev=1470714'
+ping_url = 'https://0-channel-proxy-06-ash2.facebook.com/active_ping?channel=p_%(user_id)s&partition=-2&clientid=5ae4ed0b&cb=el2p&cap=0&uid=%(user_id)s&viewer_uid=%(user_id)s&sticky_token=479&state=active'
 
 
 class LoginError(Exception):
@@ -106,3 +107,8 @@ class Facebook:
     def send_person(self, person, body, pic=None):
         '''Send message to specific user.'''
         send_person(self, person, body, pic)
+
+    def ping(self):
+        '''Tell facebook that client is alive.'''
+        res = self.session.get(ping_url % ({'user_id': self.user_id}))
+        log.debug(res.content)
