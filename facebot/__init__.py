@@ -8,6 +8,7 @@ from lxml import etree
 
 from facebot.message import send_group, send_person
 
+logging.basicConfig()
 log = logging.getLogger('facebook')
 log.setLevel(logging.WARN)
 
