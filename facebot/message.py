@@ -19,7 +19,7 @@ UPLOAD_URL = 'https://upload.facebook.com/ajax/mercury/upload.php?'
 def send_group(fb, thread, body, pic=None):
     data = {
         "message_batch[0][action_type]": "ma-type:user-generated-message",
-        "message_batch[0][author]": "fbid:%s" % (fb.user_id),
+        "message_batch[0][author]": "fbid:{}".format(fb.user_id),
         "message_batch[0][source]": "source:chat:web",
         "message_batch[0][body]": body,
         "message_batch[0][signatureID]": "3c132b09",
@@ -38,10 +38,10 @@ def send_group(fb, thread, body, pic=None):
 
     if pic:
         # upload the picture and get picture form data
-        new_data = upload_picture(fb, pic)
-        if new_data:
+        pic_data = upload_picture(fb, pic)
+        if pic_data:
             # merge together to send message with picture
-            data.update(new_data)
+            data.update(pic_data)
 
     fb.session.post(MESSAGE_URL, data)
 
@@ -49,14 +49,14 @@ def send_group(fb, thread, body, pic=None):
 def send_person(fb, person, body, pic=None):
     data = {
         "message_batch[0][action_type]": "ma-type:user-generated-message",
-        "message_batch[0][author]": "fbid:%s" % (fb.user_id),
+        "message_batch[0][author]": "fbid:{}".format(fb.user_id),
         "message_batch[0][source]": "source:chat:web",
         "message_batch[0][body]": body,
         "message_batch[0][signatureID]": "3c132b09",
         "message_batch[0][ui_push_phase]": "V3",
         "message_batch[0][status]": "0",
-        "message_batch[0][specific_to_list][0]": "fbid:%s" % (person),
-        "message_batch[0][specific_to_list][1]": "fbid:%s" % (fb.user_id),
+        "message_batch[0][specific_to_list][0]": "fbid:{}".format(person),
+        "message_batch[0][specific_to_list][1]": "fbid:{}".format(fb.user_id),
         "client": "mercury",
         "__user": fb.user_id,
         "__a": "1",
@@ -69,10 +69,10 @@ def send_person(fb, person, body, pic=None):
 
     if pic:
         # upload the picture and get picture form data
-        new_data = upload_picture(fb, pic)
-        if new_data:
+        pic_data = upload_picture(fb, pic)
+        if pic_data:
             # merge together to send message with picture
-            data.update(new_data)
+            data.update(pic_data)
 
     fb.session.post(MESSAGE_URL, data)
 
@@ -88,6 +88,7 @@ def upload_picture(fb, pic):
         "__rev": "1436610",
         'ft[tn]': '+M',
     }
+
     # upload the image to facebook server, filename should be unique
     res = fb.session.post(UPLOAD_URL + urlencode(params), files={
         'images_only': 'true',
