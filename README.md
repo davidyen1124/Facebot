@@ -25,6 +25,11 @@ Usage
 	>>> f = Facebook('<USERNAME>', '<PASSWORD>')
 ```
 
+###Listen for messages:
+1. Fill in `USERNAME` and `PASSWORD` in `listener.py`
+2. Then type `python listener.py`.
+3. Have fun seeing friends sending you messages.
+
 ###Ping:
 If you want to write a long-running script,
 you should frequently call `ping` to tell facebook that you are alive.
