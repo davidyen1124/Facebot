@@ -38,16 +38,24 @@ class Facebook:
 
         # get login form datas
         res = self.session.get(LOGIN_URL)
+
+        # check status code is 200 before proceeding
         if res.status_code != 200:
             raise LoginError('Status code is {}'.format(res.status_code))
 
+        # get login form and add email and password fields
         datas = self._get_login_form(res.text)
         datas['email'] = email
         datas['pass'] = password
 
+        # call login API with login form
         res = self.session.post(LOGIN_URL, data=datas)
+
+        # get user id
         self.user_id = self._get_user_id(res.text)
         log.debug('user_id: %s', self.user_id)
+
+        # get facebook dtsg
         self.dtsg = self._get_dtsg(res.text)
         log.debug('dtsg: %s', self.dtsg)
 
@@ -55,11 +63,12 @@ class Facebook:
 
     def _get_login_form(self, content):
         '''Scrap post datas from login page.'''
+        # get login form
         root = etree.HTML(content)
-        # get the login form
         form = root.xpath('//form[@id="login_form"][1]')
+
         # can't find form tag
-        if len(form) < 1:
+        if not form:
             raise LoginError('No form datas')
 
         fields = {}
@@ -68,6 +77,8 @@ class Facebook:
             name = input.xpath('@name[1]')
             value = input.xpath('@value[1]')
             log.debug('name: %s, value: %s' % (name, value))
+
+            # check name and value are both not empty
             if all([name, value]):
                 fields[name[0]] = value[0]
 
@@ -96,7 +107,7 @@ class Facebook:
         # remove for (;;); so we can load content in json format
         content = json.loads(re.sub('for \(;;\);', '', res.text))
 
-        # try to get access token inside a duplicate structure
+        # try to get access token inside a complex structure
         try:
             token = content['jsmods']['instances'][2][2][2]
         except KeyError:
