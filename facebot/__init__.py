@@ -88,9 +88,13 @@ class Facebook:
         '''Find user id in the facebook page.'''
         m = re.search('\"USER_ID\":\"(\d+)\"', content)
         if m:
-            return m.group(1)
+            # if user_id is 0, there is something wrong
+            if m.group(1) == '0':
+                raise LoginError('User id is 0')
+            else:
+                return m.group(1)
         else:
-            return ''
+            raise LoginError('No user id')
 
     def _get_dtsg(self, content):
         '''Find dtsg value in the facebook page.'''
@@ -98,7 +102,7 @@ class Facebook:
         if m:
             return m.group(1)
         else:
-            return ''
+            raise LoginError('No facebook dtsg')
 
     def get_access_token(self, app_id='145634995501895'):
         '''Register an access token in graph api console.'''
