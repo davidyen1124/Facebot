@@ -1,6 +1,9 @@
 # -*- encoding: utf-8 -*-
 import logging
-from urllib import urlencode
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
 import re
 import time
 
@@ -9,8 +12,8 @@ import requests
 log = logging.getLogger('facebook')
 log.setLevel(logging.WARN)
 
-message_url = 'https://www.facebook.com/ajax/mercury/send_messages.php'
-upload_url = 'https://upload.facebook.com/ajax/mercury/upload.php?'
+MESSAGE_URL = 'https://www.facebook.com/ajax/mercury/send_messages.php'
+UPLOAD_URL = 'https://upload.facebook.com/ajax/mercury/upload.php?'
 
 
 def send_group(fb, thread, body, pic=None):
@@ -40,7 +43,7 @@ def send_group(fb, thread, body, pic=None):
             # merge together to send message with picture
             data.update(new_data)
 
-    fb.session.post(message_url, data)
+    fb.session.post(MESSAGE_URL, data)
 
 
 def send_person(fb, person, body, pic=None):
@@ -71,7 +74,7 @@ def send_person(fb, person, body, pic=None):
             # merge together to send message with picture
             data.update(new_data)
 
-    fb.session.post(message_url, data)
+    fb.session.post(MESSAGE_URL, data)
 
 
 def upload_picture(fb, pic):
@@ -86,7 +89,7 @@ def upload_picture(fb, pic):
         'ft[tn]': '+M',
     }
     # upload the image to facebook server, filename should be unique
-    res = fb.session.post(upload_url + urlencode(params), files={
+    res = fb.session.post(UPLOAD_URL + urlencode(params), files={
         'images_only': 'true',
         'upload_1024': (str(time.time()), requests.get(pic).content, 'image/jpeg')
     })
@@ -96,7 +99,7 @@ def upload_picture(fb, pic):
         return
 
     # check image_id is valid
-    m = re.search(r'"image_id":(\d+),', res.content)
+    m = re.search(r'"image_id":(\d+),', res.text)
     if not m:
         return
 

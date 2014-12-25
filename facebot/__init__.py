@@ -12,11 +12,11 @@ logging.basicConfig()
 log = logging.getLogger('facebook')
 log.setLevel(logging.WARN)
 
-user_agent = 'Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0'
-facebook_url = 'http://facebook.com'
-login_url = 'https://www.facebook.com/login.php'
-access_token_url = 'https://developers.facebook.com/tools/explorer/%s/permissions?version=v2.1&__user=%s&__a=1&__dyn=5U463-i3S2e4oK4pomXWo5O12wAxu&__req=2&__rev=1470714'
-ping_url = 'https://0-channel-proxy-06-ash2.facebook.com/active_ping?channel=p_%(user_id)s&partition=-2&clientid=5ae4ed0b&cb=el2p&cap=0&uid=%(user_id)s&viewer_uid=%(user_id)s&sticky_token=479&state=active'
+USER_AGENT = 'Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0'
+
+LOGIN_URL = 'https://www.facebook.com/login.php'
+ACCESS_TOKEN_URL = 'https://developers.facebook.com/tools/explorer/{}/permissions?version=v2.1&__user={}&__a=1&__dyn=5U463-i3S2e4oK4pomXWo5O12wAxu&__req=2&__rev=1470714'
+PING_URL = 'https://0-channel-proxy-06-ash2.facebook.com/active_ping?channel=p_{user_id}&partition=-2&clientid=5ae4ed0b&cb=el2p&cap=0&uid={user_id}&viewer_uid={user_id}&sticky_token=479&state=active'
 
 
 class LoginError(Exception):
@@ -25,33 +25,36 @@ class LoginError(Exception):
 
 class Facebook:
     def __init__(self, email, password):
+        # create a session instance
         self.session = requests.Session()
-        self.session.headers.update({'User-Agent': user_agent})
+        # use custom user-agent
+        self.session.headers.update({'User-Agent': USER_AGENT})
+
+        # login with email and password
         self._login(email, password)
 
     def _login(self, email, password):
         log.debug('loging in')
 
         # get login form datas
-        res = self.session.get(facebook_url)
+        res = self.session.get(LOGIN_URL)
         if res.status_code != 200:
-            raise LoginError('Status code is %d' % res.status_code)
+            raise LoginError('Status code is {}'.format(res.status_code))
 
-        datas = self._get_login_form(res.content)
+        datas = self._get_login_form(res.text)
         datas['email'] = email
         datas['pass'] = password
 
-        res = self.session.post(login_url, data=datas)
-        self.user_id = self._get_user_id(res.content)
+        res = self.session.post(LOGIN_URL, data=datas)
+        self.user_id = self._get_user_id(res.text)
         log.debug('user_id: %s', self.user_id)
-        self.dtsg = self._get_dtsg(res.content)
+        self.dtsg = self._get_dtsg(res.text)
         log.debug('dtsg: %s', self.dtsg)
 
         log.info('welcome %s', self.user_id)
 
     def _get_login_form(self, content):
         '''Scrap post datas from login page.'''
-
         root = etree.HTML(content)
         # get the login form
         form = root.xpath('//form[@id="login_form"][1]')
@@ -65,7 +68,7 @@ class Facebook:
             name = input.xpath('@name[1]')
             value = input.xpath('@value[1]')
             log.debug('name: %s, value: %s' % (name, value))
-            if len(name) > 0 and len(value) > 0:
+            if all([name, value]):
                 fields[name[0]] = value[0]
 
         return fields
@@ -89,9 +92,9 @@ class Facebook:
     def get_access_token(self, app_id='145634995501895'):
         '''Register an access token in graph api console.'''
         # get response of registering access token
-        res = self.session.get(access_token_url % (app_id, self.user_id))
+        res = self.session.get(ACCESS_TOKEN_URL.format(app_id, self.user_id))
         # remove for (;;); so we can load content in json format
-        content = json.loads(re.sub('for \(;;\);', '', res.content))
+        content = json.loads(re.sub('for \(;;\);', '', res.text))
 
         # try to get access token inside a duplicate structure
         try:
@@ -111,5 +114,5 @@ class Facebook:
 
     def ping(self):
         '''Tell facebook that client is alive.'''
-        res = self.session.get(ping_url % ({'user_id': self.user_id}))
-        log.debug(res.content)
+        res = self.session.get(PING_URL.format(user_id=self.user_id))
+        log.debug(res.text)
