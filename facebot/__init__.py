@@ -116,3 +116,5 @@ class Facebook:
         '''Tell facebook that client is alive.'''
         res = self.session.get(PING_URL.format(user_id=self.user_id))
         log.debug(res.text)
+        # check pong is in response text
+        return 'pong' in res.text
