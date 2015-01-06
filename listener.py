@@ -82,7 +82,7 @@ def main():
             log.debug('%s(%s): %s', author_name, author_id, message)
 
             # if author is myself, leave him alone
-            if author_id == fb.user_id:
+            if author_id == int(fb.user_id):
                 continue
 
             if tid.startswith('mid'):
