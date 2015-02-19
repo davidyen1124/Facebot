@@ -24,6 +24,7 @@ class LoginError(Exception):
 
 
 class Facebook:
+
     def __init__(self, email, password):
         # create a session instance
         self.session = requests.Session()
@@ -119,13 +120,13 @@ class Facebook:
 
         return token
 
-    def send_group(self, thread, body, pic=None):
+    def send_group(self, *args, **kwargs):
         '''Send message to specific group.'''
-        send_group(self, thread, body, pic)
+        send_group(self, *args, **kwargs)
 
-    def send_person(self, person, body, pic=None):
+    def send_person(self, *args, **kwargs):
         '''Send message to specific user.'''
-        send_person(self, person, body, pic)
+        send_person(self, *args, **kwargs)
 
     def ping(self):
         '''Tell facebook that client is alive.'''

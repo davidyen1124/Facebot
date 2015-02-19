@@ -16,7 +16,7 @@ MESSAGE_URL = 'https://www.facebook.com/ajax/mercury/send_messages.php'
 UPLOAD_URL = 'https://upload.facebook.com/ajax/mercury/upload.php?'
 
 
-def send_group(fb, thread, body, pic=None):
+def send_group(fb, thread, body, pic=None, sticker=None):
     data = {
         "message_batch[0][action_type]": "ma-type:user-generated-message",
         "message_batch[0][author]": "fbid:{}".format(fb.user_id),
@@ -43,10 +43,14 @@ def send_group(fb, thread, body, pic=None):
             # merge together to send message with picture
             data.update(pic_data)
 
+    # add sticker if sticker is available
+    if sticker:
+        data["message_batch[0][sticker_id]"] = sticker
+
     fb.session.post(MESSAGE_URL, data)
 
 
-def send_person(fb, person, body, pic=None):
+def send_person(fb, person, body, pic=None, sticker=None):
     data = {
         "message_batch[0][action_type]": "ma-type:user-generated-message",
         "message_batch[0][author]": "fbid:{}".format(fb.user_id),
@@ -73,6 +77,10 @@ def send_person(fb, person, body, pic=None):
         if pic_data:
             # merge together to send message with picture
             data.update(pic_data)
+
+    # add sticker if sticker is available
+    if sticker:
+        data["message_batch[0][sticker_id]"] = sticker
 
     fb.session.post(MESSAGE_URL, data)
 
