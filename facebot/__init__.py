@@ -7,6 +7,7 @@ import requests
 from lxml import etree
 
 from facebot.message import send_group, send_person
+from facebot.sticker import get_stickers
 
 logging.basicConfig()
 log = logging.getLogger('facebook')
@@ -134,3 +135,7 @@ class Facebook:
         log.debug(res.text)
         # check pong is in response text
         return 'pong' in res.text
+
+    def get_stickers(self, *args, **kwargs):
+        '''Get all stickers by giving one sticker bundle id.'''
+        return get_stickers(self, *args, **kwargs)
