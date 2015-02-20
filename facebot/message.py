@@ -15,8 +15,15 @@ log.setLevel(logging.WARN)
 MESSAGE_URL = 'https://www.facebook.com/ajax/mercury/send_messages.php'
 UPLOAD_URL = 'https://upload.facebook.com/ajax/mercury/upload.php?'
 
+# define like sticker id
+LIKE_STICKER = {
+    'l': '369239383222810',
+    'm': '369239343222814',
+    's': '369239263222822'
+}
 
-def send_group(fb, thread, body, pic=None, sticker=None):
+
+def send_group(fb, thread, body, pic=None, sticker=None, like=None):
     data = {
         "message_batch[0][action_type]": "ma-type:user-generated-message",
         "message_batch[0][author]": "fbid:{}".format(fb.user_id),
@@ -44,13 +51,21 @@ def send_group(fb, thread, body, pic=None, sticker=None):
             data.update(pic_data)
 
     # add sticker if sticker is available
-    if sticker:
+    if any([sticker, like]):
+        # if like is not None, find the corresponding sticker id
+        if like:
+            try:
+                sticker = LIKE_STICKER[like.lower()]
+            except KeyError:
+                # if user doesn't enter l or m or s, then use the large one
+                sticker = LIKE_STICKER['l']
+
         data["message_batch[0][sticker_id]"] = sticker
 
     fb.session.post(MESSAGE_URL, data)
 
 
-def send_person(fb, person, body, pic=None, sticker=None):
+def send_person(fb, person, body, pic=None, sticker=None, like=None):
     data = {
         "message_batch[0][action_type]": "ma-type:user-generated-message",
         "message_batch[0][author]": "fbid:{}".format(fb.user_id),
@@ -79,7 +94,15 @@ def send_person(fb, person, body, pic=None, sticker=None):
             data.update(pic_data)
 
     # add sticker if sticker is available
-    if sticker:
+    if any([sticker, like]):
+        # if like is not None, find the corresponding sticker id
+        if like:
+            try:
+                sticker = LIKE_STICKER[like.lower()]
+            except KeyError:
+                # if user doesn't enter l or m or s, then use the large one
+                sticker = LIKE_STICKER['l']
+
         data["message_batch[0][sticker_id]"] = sticker
 
     fb.session.post(MESSAGE_URL, data)
