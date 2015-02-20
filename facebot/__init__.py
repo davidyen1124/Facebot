@@ -6,7 +6,9 @@ import json
 import requests
 from lxml import etree
 
-from facebot.message import send_group, send_person, group_typing, person_typing
+from facebot.message import (
+    send_group, send_person, group_typing, person_typing,
+    read)
 from facebot.sticker import get_stickers
 
 logging.basicConfig()
@@ -147,3 +149,7 @@ class Facebook:
     def person_typing(self, *args, **kwargs):
         '''Tell specific user that current user is typing.'''
         return person_typing(self, *args, **kwargs)
+
+    def read(self, *args, **kwargs):
+        '''Read messages of this conversation.'''
+        return read(self, *args, **kwargs)

@@ -15,6 +15,7 @@ log.setLevel(logging.WARN)
 MESSAGE_URL = 'https://www.facebook.com/ajax/mercury/send_messages.php'
 UPLOAD_URL = 'https://upload.facebook.com/ajax/mercury/upload.php?'
 TYP_URL = 'https://www.facebook.com/ajax/messaging/typ.php'
+READ_URL = 'https://www.facebook.com/ajax/mercury/change_read_status.php'
 
 # define like sticker id
 LIKE_STICKER = {
@@ -182,3 +183,18 @@ def person_typing(fb, thread):
     }
 
     fb.session.post(TYP_URL, data)
+
+
+def read(fb, thread):
+    data = {
+        "ids[{}]".format(thread): "true",
+        "__user": fb.user_id,
+        "__a": "1",
+        "__dyn": "7n8anEBQ9FoBUSt2u6aAix97xN6yUgByV9GiyFqzQC-C26m6oDAyoSnx2ubhHAyXBBzEy5E",
+        "__req": "c",
+        "fb_dtsg": fb.dtsg,
+        "ttstamp": "26581691011017411284781047297",
+        "__rev": "1436610",
+    }
+
+    fb.session.post(READ_URL, data)
