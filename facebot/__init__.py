@@ -6,7 +6,7 @@ import json
 import requests
 from lxml import etree
 
-from facebot.message import send_group, send_person
+from facebot.message import send_group, send_person, group_typing, person_typing
 from facebot.sticker import get_stickers
 
 logging.basicConfig()
@@ -139,3 +139,11 @@ class Facebook:
     def get_stickers(self, *args, **kwargs):
         '''Get all stickers by giving one sticker bundle id.'''
         return get_stickers(self, *args, **kwargs)
+
+    def group_typing(self, *args, **kwargs):
+        '''Tell everyone in group that current user is typing.'''
+        return group_typing(self, *args, **kwargs)
+
+    def person_typing(self, *args, **kwargs):
+        '''Tell specific user that current user is typing.'''
+        return person_typing(self, *args, **kwargs)

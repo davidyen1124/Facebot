@@ -14,6 +14,7 @@ log.setLevel(logging.WARN)
 
 MESSAGE_URL = 'https://www.facebook.com/ajax/mercury/send_messages.php'
 UPLOAD_URL = 'https://upload.facebook.com/ajax/mercury/upload.php?'
+TYP_URL = 'https://www.facebook.com/ajax/messaging/typ.php'
 
 # define like sticker id
 LIKE_STICKER = {
@@ -145,3 +146,39 @@ def upload_picture(fb, pic):
         "message_batch[0][preview_attachments][0][preview_height]": "720",
         "message_batch[0][image_ids][0]": image_id,
     }
+
+
+def group_typing(fb, thread):
+    data = {
+        "typ": "1",
+        "to": "",
+        "source": "web-messenger",
+        "thread": thread,
+        "__user": fb.user_id,
+        "__a": "1",
+        "__dyn": "7n8anEBQ9FoBUSt2u6aAix97xN6yUgByV9GiyFqzQC-C26m6oDAyoSnx2ubhHAyXBBzEy5E",
+        "__req": "c",
+        "fb_dtsg": fb.dtsg,
+        "ttstamp": "26581691011017411284781047297",
+        "__rev": "1436610",
+    }
+
+    fb.session.post(TYP_URL, data)
+
+
+def person_typing(fb, thread):
+    data = {
+        "typ": "1",
+        "to": thread,
+        "source": "web-messenger",
+        "thread": thread,
+        "__user": fb.user_id,
+        "__a": "1",
+        "__dyn": "7n8anEBQ9FoBUSt2u6aAix97xN6yUgByV9GiyFqzQC-C26m6oDAyoSnx2ubhHAyXBBzEy5E",
+        "__req": "c",
+        "fb_dtsg": fb.dtsg,
+        "ttstamp": "26581691011017411284781047297",
+        "__rev": "1436610",
+    }
+
+    fb.session.post(TYP_URL, data)
