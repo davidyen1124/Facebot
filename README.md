@@ -44,7 +44,15 @@ you should frequently call `ping` to tell facebook that you are alive.
 	>>> f.send_person('<USER_ID>', '<BODY>') 
 	
 	# send message with photo
-	>>> f.send_person('<USER_ID>', '<BODY>', 'http://imgs.xkcd.com/comics/python.png')
+	>>> f.send_person('<USER_ID>', '<BODY>', pic='http://imgs.xkcd.com/comics/python.png')
+	
+	# send message with sticker
+	>>> f.send_person('<USER_ID>', '<BODY>', sticker='392309754199670')
+	
+	# send message with like gesture only available in mobile app
+	>>> f.send_person('<USER_ID>', '<BODY>', like='l') # large one
+	>>> f.send_person('<USER_ID>', '<BODY>', like='m') # medium one
+	>>> f.send_person('<USER_ID>', '<BODY>', like='s') # small one
 ```
 
 ###Send message to the group:
@@ -56,7 +64,30 @@ Select `See Full Conversaction` in the group dialog, and the last part of url sh
 	>>> f.send_group('<THREAD_ID>', '<BODY>') 
 	
 	# send message with photo
-	>>> f.send_person('<THREAD_ID>', '<BODY>', 'http://imgs.xkcd.com/comics/python.png')
+	>>> f.send_group('<THREAD_ID>', '<BODY>', pic='http://imgs.xkcd.com/comics/python.png')
+	
+	# send message with sticker
+	>>> f.send_group('<THREAD_ID>', '<BODY>', sticker='392309754199670')
+	
+	# send message with like gesture only available in mobile app
+	>>> f.send_group('<THREAD_ID>', '<BODY>', like='l') # large one
+	>>> f.send_group('<THREAD_ID>', '<BODY>', like='m') # medium one
+	>>> f.send_group('<THREAD_ID>', '<BODY>', like='s') # small one
+```
+
+###Read the conversation:
+```
+	# read all the messages in this conversation
+	>>> f.read('<THREAD_ID>')
+```
+
+###Typing:
+```
+	# send typing status to the group
+	>>> f.group_typing('<THREAD_ID>')
+
+	# send typing status to the user
+	>>> f.person_typing('<USER_ID>')
 ```
 
 ###Get access token:
