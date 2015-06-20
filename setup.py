@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='facebot',
-    version='0.0.8',
+    version='0.0.9',
     author='davidyen1124',
     author_email='davidyen1124@gmail.com',
     packages=['facebot'],
