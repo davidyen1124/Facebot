@@ -17,19 +17,39 @@ fb = Facebook(USERNAME, PASSWORD)
 log.info('login %s', fb.user_id)
 
 
-def pull_message(seq=None):
+def get_sticky():
+    '''
+    Call pull api to get sticky and pool parameter,
+    newer api needs these parameter to work.
+    '''
+    url = 'https://0-edge-chat.facebook.com/pull?channel=p_{user_id}&partition=-2&clientid=3396bf29&cb=gr6l&idle=0&cap=8&msgs_recv=0&uid={user_id}&viewer_uid={user_id}&state=active&seq=0'
+
+    # call pull api, and set timeout as one minute
+    res = fb.session.get(url.format(user_id=fb.user_id), timeout=60)
+
+    # remove for (;;); so we can turn them into dictionaries
+    content = json.loads(re.sub('for \(;;\); ', '', res.text))
+
+    # check existence of lb_info
+    if 'lb_info' not in content:
+        raise Exception('Get sticky pool error')
+
+    sticky = content['lb_info']['sticky']
+    pool = content['lb_info']['pool']
+
+    return sticky, pool
+
+
+def pull_message(sticky, pool, seq='0'):
     '''
     Call pull api with seq value to get message data.
     '''
-    url = 'https://1-channel-proxy-07-ash2.facebook.com/pull?channel=p_{user_id}&partition=-2&clientid=6f09f868&cb=ith0&idle=8&cap=0&uid={user_id}&viewer_uid={user_id}&sticky_token=195&traceid=H1WKF&state=active'
-
-    # if seq is not None, append seq to parameters
-    if seq:
-        url += '&seq={seq}'
+    url = 'https://0-edge-chat.facebook.com/pull?channel=p_{user_id}&partition=-2&clientid=3396bf29&cb=gr6l&idle=0&cap=8&msgs_recv=0&uid={user_id}&viewer_uid={user_id}&state=active&seq={seq}&sticky_token={sticky}&sticky_pool={pool}'
 
     # call pull api, and set timeout as one minute
     res = fb.session.get(
-        url.format(user_id=fb.user_id, seq=seq), timeout=60)
+        url.format(user_id=fb.user_id, seq=seq, sticky=sticky, pool=pool),
+        timeout=60)
 
     # remove for (;;); so we can turn them into dictionaries
     content = json.loads(re.sub('for \(;;\); ', '', res.text))
@@ -63,8 +83,11 @@ def get_message(content):
 
 
 def main():
+    # get sticky and pool parameter, so we can listener for message
+    sticky, pool = get_sticky()
+
     # call pull api without seq, so we can get seq value from response
-    _, seq = pull_message()
+    _, seq = pull_message(sticky, pool)
 
     while True:
         # tell facebook that client is alive
@@ -72,7 +95,7 @@ def main():
 
         # call pull api with seq
         try:
-            content, seq = pull_message(seq)
+            content, seq = pull_message(sticky, pool, seq)
         except requests.exceptions.RequestException as e:
             log.warn('RequestException: {}'.format(e))
             continue
