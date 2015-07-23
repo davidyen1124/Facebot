@@ -13,10 +13,11 @@ from facebot.sticker import get_stickers
 
 logging.basicConfig()
 log = logging.getLogger('facebook')
-log.setLevel(logging.WARN)
+log.setLevel(logging.DEBUG)
 
 USER_AGENT = 'Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0'
 
+HOME_URL = 'https://www.facebook.com/'
 LOGIN_URL = 'https://www.facebook.com/login.php'
 ACCESS_TOKEN_URL = 'https://developers.facebook.com/tools/explorer/{}/permissions?version=v2.1&__user={}&__a=1&__dyn=5U463-i3S2e4oK4pomXWo5O12wAxu&__req=2&__rev=1470714'
 PING_URL = 'https://0-channel-proxy-06-ash2.facebook.com/active_ping?channel=p_{user_id}&partition=-2&clientid=5ae4ed0b&cb=el2p&cap=0&uid={user_id}&viewer_uid={user_id}&sticky_token=479&state=active'
@@ -51,9 +52,13 @@ class Facebook:
         datas = self._get_login_form(res.text)
         datas['email'] = email
         datas['pass'] = password
-
+        cookies2 = {
+                   '_js_datr': self._get_reg_instance(),
+                   '_js_reg_fb_ref': 'https%3A%2F%2Fwww.facebook.com%2F',
+                   '_js_reg_fb_gate': 'https%3A%2F%2Fwww.facebook.com%2F'
+                   }
         # call login API with login form
-        res = self.session.post(LOGIN_URL, data=datas)
+        res = self.session.post(LOGIN_URL, data=datas, cookies=cookies2)
 
         # get user id
         self.user_id = self._get_user_id(res.text)
@@ -65,6 +70,13 @@ class Facebook:
 
         log.info('welcome %s', self.user_id)
 
+    def _get_reg_instance(self):
+        '''Fetch "javascript-generated" cookie'''
+        content = self.session.get(HOME_URL).text
+        root = etree.HTML(content)
+        instance = root.xpath('//input[@id="reg_instance"]/@value')
+        return instance[0]
+        
     def _get_login_form(self, content):
         '''Scrap post datas from login page.'''
         # get login form
