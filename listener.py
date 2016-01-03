@@ -6,6 +6,7 @@ import logging
 
 import requests
 from facebot import Facebook
+from facebot.message import send_person
 
 logging.basicConfig()
 log = logging.getLogger()
@@ -50,7 +51,7 @@ def pull_message(sticky, pool, seq='0'):
     res = fb.session.get(
         url.format(user_id=fb.user_id, seq=seq, sticky=sticky, pool=pool),
         timeout=60)
-
+    log.debug(res.text)
     # remove for (;;); so we can turn them into dictionaries
     content = json.loads(re.sub('for \(;;\); ', '', res.text))
 
@@ -71,15 +72,16 @@ def get_message(content):
 
     for m in content['ms']:
         # we only want item which type is m_messaging
-        if m.get('type') != 'm_messaging':
+        if m.get('type') != 'messaging':
             continue
-
-        message = m.get('message', '')
-        author_id = m.get('author_fbid', '')
-        author_name = m.get('author_name', '')
-        tid = m.get('tid', '')
-
-        yield tid, author_id, author_name, message
+        try:
+            message = m['message']['body']
+            author_id = m['message']['sender_fbid']
+            author_name = m['message']['sender_name']
+            tid = m['message']['mid']
+            yield tid, author_id, author_name, message
+        except KeyError:
+            return
 
 
 def main():
