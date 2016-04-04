@@ -12,7 +12,8 @@ import requests
 log = logging.getLogger('facebook')
 log.setLevel(logging.WARN)
 
-MESSAGE_URL = 'https://www.facebook.com/ajax/mercury/send_messages.php'
+#MESSAGE_URL = 'https://www.facebook.com/ajax/mercury/send_messages.php'
+MESSAGE_URL = 'https://m.facebook.com/messages/send/?icm=1&refid=12'
 UPLOAD_URL = 'https://upload.facebook.com/ajax/mercury/upload.php?'
 TYP_URL = 'https://www.facebook.com/ajax/messaging/typ.php'
 READ_URL = 'https://www.facebook.com/ajax/mercury/change_read_status.php'
@@ -68,7 +69,7 @@ def send_group(fb, thread, body, pic=None, sticker=None, like=None):
 
 
 def send_person(fb, person, body, pic=None, sticker=None, like=None):
-    data = {
+    '''data = {
         "message_batch[0][action_type]": "ma-type:user-generated-message",
         "message_batch[0][author]": "fbid:{}".format(fb.user_id),
         "message_batch[0][source]": "source:chat:web",
@@ -86,8 +87,21 @@ def send_person(fb, person, body, pic=None, sticker=None, like=None):
         "fb_dtsg": fb.dtsg,
         "ttstamp": "26581691011017411284781047297",
         "__rev": "1436610",
+    }'''
+    data = {
+        "charset_test":"€,´,€,´,水,Д,Є",
+        "tids":"mid.1431958823342:701030c3d90a7f3499",
+        "wwwupp":"V3",
+        "ids[{}]".format(person):person,
+        "body":body,
+        "waterfall_source":"message",
+        "m_sess":"",
+        "fb_dtsg":fb.dtsg,
+        "__dyn":"1Z3p5wnE-4UpwDF3FQ8xO6ES9xG6U4a6EC5UfQ1uzobE6u1Vw821-yo2bw",
+        "__req":"h",
+        "__ajax__":"true",
+        "__user":fb.user_id
     }
-
     if pic:
         # upload the picture and get picture form data
         pic_data = upload_picture(fb, pic)
