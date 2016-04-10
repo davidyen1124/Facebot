@@ -6,14 +6,15 @@ except ImportError:
     from urllib import urlencode
 import re
 import time
+from datetime import datetime
 
 import requests
 
 log = logging.getLogger('facebook')
 log.setLevel(logging.WARN)
 
-#MESSAGE_URL = 'https://www.facebook.com/ajax/mercury/send_messages.php'
-MESSAGE_URL = 'https://m.facebook.com/messages/send/?icm=1&refid=12'
+#MESSAGE_URL = 'https://m.facebook.com/messages/send/?icm=1&refid=12'
+MESSAGE_URL = 'https://www.facebook.com/ajax/mercury/send_messages.php?dpr=1'
 UPLOAD_URL = 'https://upload.facebook.com/ajax/mercury/upload.php?'
 TYP_URL = 'https://www.facebook.com/ajax/messaging/typ.php'
 READ_URL = 'https://www.facebook.com/ajax/mercury/change_read_status.php'
@@ -88,20 +89,47 @@ def send_person(fb, person, body, pic=None, sticker=None, like=None):
         "ttstamp": "26581691011017411284781047297",
         "__rev": "1436610",
     }'''
+
     data = {
-        "charset_test":"€,´,€,´,水,Д,Є",
-        "tids":"mid.1431958823342:701030c3d90a7f3499",
-        "wwwupp":"V3",
-        "ids[{}]".format(person):person,
-        "body":body,
-        "waterfall_source":"message",
-        "m_sess":"",
-        "fb_dtsg":fb.dtsg,
-        "__dyn":"1Z3p5wnE-4UpwDF3FQ8xO6ES9xG6U4a6EC5UfQ1uzobE6u1Vw821-yo2bw",
-        "__req":"h",
-        "__ajax__":"true",
-        "__user":fb.user_id
+        "__a": "1",
+        "__dyn": "",
+        "__pc": "EXP1:DEFAULT",
+        "__req": "1d",
+        "__rev": "2274481",
+        "__user": fb.user_id,
+        "client": "mercury",
+        "fb_dtsg": fb.dtsg,
+        "message_batch[0][action_type]": "ma - type:user - generated - message",
+        "message_batch[0][author]": "fbid:{}".format(fb.user_id),
+        "message_batch[0][author_email]": "",
+        "message_batch[0][body]": body,
+        "message_batch[0][ephemeral_ttl_mode]": "0",
+        "message_batch[0][has_attachment]": "false",
+        "message_batch[0][html_body]": "false",
+        "message_batch[0][is_filtered_content]": "false",
+        "message_batch[0][is_filtered_content_account]": "false",
+        "message_batch[0][is_filtered_content_bh]": "false",
+        "message_batch[0][is_filtered_content_invalid_app]": "false",
+        "message_batch[0][is_filtered_content_quasar]": "false",
+        "message_batch[0][is_forward]": "false",
+        "message_batch[0][is_spoof_warning]": "false",
+        "message_batch[0][is_unread]": "false",
+        "message_batch[0][manual_retry_cnt]": "0",
+        "message_batch[0][other_user_fbid]": person,
+        "message_batch[0][source]": "source:chat:web",
+        "message_batch[0][source_tags][0]": "source:chat",
+        "message_batch[0][specific_to_list][0]": "fbid:{}".format(person),
+        "message_batch[0][specific_to_list][1]": "fbid:{}".format(fb.user_id),
+        "message_batch[0][status]": "0",
+        "message_batch[0][thread_id]": "",
+        "message_batch[0][timestamp]": str(round(time.mktime(datetime.now().timetuple()) * 1000)),
+        "message_batch[0][timestamp_absolute]": "Today",
+        "message_batch[0][timestamp_relative]": datetime.now().strftime("%I:%M%P"),
+        "message_batch[0][timestamp_time_passed]": "0",
+        "message_batch[0][ui_push_phase]": "V3",
+        "ttstamp": generate_ttstamp(fb.dtsg)
     }
+
     if pic:
         # upload the picture and get picture form data
         pic_data = upload_picture(fb, pic)
@@ -212,3 +240,14 @@ def read(fb, thread):
     }
 
     fb.session.post(READ_URL, data)
+
+
+def generate_ttstamp(dtsg):
+    u = ''
+    v = 0
+    while v < len(dtsg):
+        u += str(ord(dtsg[v]))
+        v += 1
+    ttstamp = '2%s' % u
+
+    return ttstamp
