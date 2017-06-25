@@ -19,18 +19,18 @@ or
 
 Usage
 -----
-###Initiate a facebook instance:
+### Initiate a facebook instance:
 ```
 	>>> from facebot import Facebook
 	>>> f = Facebook('<USERNAME>', '<PASSWORD>')
 ```
 
-###Listen for messages:
+### Listen for messages:
 1. Fill in `USERNAME` and `PASSWORD` in `listener.py`
 2. Then type `python listener.py`.
 3. Have fun seeing friends sending you messages.
 
-###Ping:
+### Ping:
 If you want to write a long-running script,
 you should frequently call `ping` to tell facebook that you are alive.
 ```
@@ -38,7 +38,7 @@ you should frequently call `ping` to tell facebook that you are alive.
 	>>> f.ping()
 ```
 
-###Send message to a person:
+### Send message to a person:
 ```
 	# send a text message
 	>>> f.send_person('<USER_ID>', '<BODY>') 
@@ -55,7 +55,7 @@ you should frequently call `ping` to tell facebook that you are alive.
 	>>> f.send_person('<USER_ID>', '<BODY>', like='s') # small one
 ```
 
-###Send message to the group:
+### Send message to the group:
 How to find thread id?
 
 Select `See Full Conversaction` in the group dialog, and the last part of url should be `conversaction-123456789`, so `123456789` is the thread id.
@@ -75,13 +75,13 @@ Select `See Full Conversaction` in the group dialog, and the last part of url sh
 	>>> f.send_group('<THREAD_ID>', '<BODY>', like='s') # small one
 ```
 
-###Read the conversation:
+### Read the conversation:
 ```
 	# read all the messages in this conversation
 	>>> f.read('<THREAD_ID>')
 ```
 
-###Typing:
+### Typing:
 ```
 	# send typing status to the group
 	>>> f.group_typing('<THREAD_ID>')
@@ -90,7 +90,7 @@ Select `See Full Conversaction` in the group dialog, and the last part of url sh
 	>>> f.person_typing('<USER_ID>')
 ```
 
-###Get access token:
+### Get access token:
 ```
 	# default using Graph API Explorer
 	>>> f.get_access_token()
