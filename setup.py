@@ -10,7 +10,7 @@ setup(
     description='Unofficial facebook api',
     license='MIT',
     install_requires=[
-        'lxml==4.6.3',
+        'lxml==4.6.5',
         'requests==2.20.0'
     ],
 )
