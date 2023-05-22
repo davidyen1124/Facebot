@@ -11,6 +11,6 @@ setup(
     license='MIT',
     install_requires=[
         'lxml==4.6.3',
-        'requests==2.20.0'
+        'requests==2.31.0'
     ],
 )
